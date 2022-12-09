@@ -3,9 +3,18 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const mongoose = require('mongoose');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+
+const db = 'mongodb+srv://user:4R4Y5WzMbuAKF3MW@market-mvp-be.rqk6ads.mongodb.net/?retryWrites=true&w=majority';
+
+mongoose
+  .set('strictQuery', false)
+  .connect(db)
+  .then((res) => console.log('Connected to DB'))
+  .catch((error) => console.log(error));
 
 var app = express();
 
