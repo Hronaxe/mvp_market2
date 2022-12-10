@@ -1,12 +1,14 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
 const mongoose = require('mongoose');
+const Product = require('./models/product.js');
+const Joi = require('joi');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
 
 const db = 'mongodb+srv://user:4R4Y5WzMbuAKF3MW@market-mvp-be.rqk6ads.mongodb.net/?retryWrites=true&w=majority';
 
@@ -16,7 +18,7 @@ mongoose
   .then((res) => console.log('Connected to DB'))
   .catch((error) => console.log(error));
 
-var app = express();
+  const app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -30,6 +32,38 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+
+//rest api section
+
+app.post('/api/products', (req, res) => {
+  const validate = validateProduct(req.body).error;
+  if (validate) return res.status(400).send(validate.message);
+  
+  const post = new Product({
+    Produs: req.body.Produs,
+    Pret: req.body.Pret,
+    Description: req.body.Description
+  });
+
+  post
+    .save()
+    .then((result) => res.send(result))
+    .catch((error) => {
+      console.log(error);
+      res.status(500).send('Internal Server Error');
+    });
+});
+
+//product body validation
+
+function validateProduct(product) {
+  const schema = Joi.object({
+      Produs: Joi.string().required(),
+      Pret: Joi.number().required().greater(0),
+      Description: Joi.string().required()
+  });
+  return schema.validate(product);
+}
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
