@@ -18,7 +18,7 @@ mongoose
   .then((res) => console.log('Connected to DB'))
   .catch((error) => console.log(error));
 
-  const app = express();
+var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
