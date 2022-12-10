@@ -54,6 +54,16 @@ app.post('/api/products', (req, res) => {
     });
 });
 
+app.get('/api/products', (req, res) => {
+  Product
+    .find()
+    .then((products) => res.send(products))
+    .catch((error) => {
+      console.log(error);
+      res.status(500).send('Internal Server Error');
+    })
+});
+
 //product body validation
 
 function validateProduct(product) {
