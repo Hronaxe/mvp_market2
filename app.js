@@ -74,6 +74,29 @@ app.get('/api/products/:id', (req, res) => {
     })
 });
 
+app.put('/api/products/:id', (req, res) => {
+  if (req.body.Produs === "" || req.body.Pret <= 0 || req.body.Description == "") {
+    res.status(400).send('Invalid input data');
+    return;
+  }
+
+  Product
+    .findByIdAndUpdate(req.params.id, {
+      Produs: req.body.Produs,
+      Pret: req.body.Pret,
+      Description: req.body.Description
+    })
+    .then((result) => {
+      if (result === null) {
+        return res.status(404).send('Product not found');
+      }
+      res.send(result)})
+    .catch((error) => {
+      console.log(error);
+      res.status(500).send('Internal Server Error');
+    });
+});
+
 //product body validation
 
 function validateProduct(product) {
