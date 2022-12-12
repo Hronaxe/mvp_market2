@@ -97,6 +97,15 @@ app.put('/api/products/:id', (req, res) => {
     });
 });
 
+app.delete("/api/products/:id", async (req, res) => {
+  const product = await Product.findByIdAndDelete(req.params.id);
+
+  if (!product)
+    return res.status(404).send("The product with the given ID was not found.");
+
+  res.send(product);
+});
+
 //product body validation
 
 function validateProduct(product) {
