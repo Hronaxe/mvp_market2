@@ -9,6 +9,7 @@ var Joi = require('joi');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var productsRouter = require('./routes/product.js');
 
 const db = 'mongodb+srv://user:4R4Y5WzMbuAKF3MW@market-mvp-be.rqk6ads.mongodb.net/?retryWrites=true&w=majority';
 
@@ -32,90 +33,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-
-//rest api section
-
-app.post('/api/products', (req, res) => {
-  const validate = validateProduct(req.body).error;
-  if (validate) return res.status(400).send(validate.message);
-  
-  const post = new Product({
-    Produs: req.body.Produs,
-    Pret: req.body.Pret,
-    Description: req.body.Description
-  });
-
-  post
-    .save()
-    .then((result) => res.send(result))
-    .catch((error) => {
-      console.log(error);
-      res.status(500).send('Internal Server Error');
-    });
-});
-
-app.get('/api/products', (req, res) => {
-  Product
-    .find()
-    .then((products) => res.send(products))
-    .catch((error) => {
-      console.log(error);
-      res.status(500).send('Internal Server Error');
-    })
-});
-
-app.get('/api/products/:id', (req, res) => {
-  Product
-    .findById(req.params.id)
-    .then((product) => res.send(product))
-    .catch((error) => {
-      console.log(error);
-      res.status(500).send('Internal Server Error');
-    })
-});
-
-app.put('/api/products/:id', (req, res) => {
-  if (req.body.Produs === "" || req.body.Pret <= 0 || req.body.Description == "") {
-    res.status(400).send('Invalid input data');
-    return;
-  }
-
-  Product
-    .findByIdAndUpdate(req.params.id, {
-      Produs: req.body.Produs,
-      Pret: req.body.Pret,
-      Description: req.body.Description
-    })
-    .then((result) => {
-      if (result === null) {
-        return res.status(404).send('Product not found');
-      }
-      res.send(result)})
-    .catch((error) => {
-      console.log(error);
-      res.status(500).send('Internal Server Error');
-    });
-});
-
-app.delete("/api/products/:id", async (req, res) => {
-  const product = await Product.findByIdAndDelete(req.params.id);
-
-  if (!product)
-    return res.status(404).send("The product with the given ID was not found.");
-
-  res.send(product);
-});
-
-//product body validation
-
-function validateProduct(product) {
-  const schema = Joi.object({
-      Produs: Joi.string().required(),
-      Pret: Joi.number().required().greater(0),
-      Description: Joi.string().required()
-  });
-  return schema.validate(product);
-}
+app.use('/api/products', productsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
