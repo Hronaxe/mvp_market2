@@ -9,7 +9,7 @@ var Joi = require('joi');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-var productsRouter = require('./routes/product.js');
+var productsRouter = require('./routes/products');
 var authRouter = require("./routes/auth");
 
 const db = 'mongodb+srv://user:4R4Y5WzMbuAKF3MW@market-mvp-be.rqk6ads.mongodb.net/?retryWrites=true&w=majority';
@@ -34,7 +34,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/api/users', usersRouter);
-app.use('/api/products', productsRouter);
+app.use('/api/', productsRouter);
 app.use('/api/auth', authRouter);
 
 // catch 404 and forward to error handler

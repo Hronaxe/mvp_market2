@@ -35,7 +35,7 @@ describe('API', function() {
 
   it('should succesfully get test item by id', function(done) {
     request(app)
-    .get('/api/products/' + id)
+    .get('/api/product/' + id)
     .end(function(err,res) {
       expect(res.body._id).to.be.equal(id);
       expect(res.body.Produs).to.be.equal(testitem.Produs);
@@ -50,13 +50,13 @@ describe('API', function() {
 
   it('should succesfully update test item', function(done) {
     request(app)
-    .put('/api/products/' + id)
+    .put('/api/product/' + id)
     .send(updateditem)
     .end(function(err,res) {
       expect(res.body._id).to.be.equal(id);
-      expect(res.body.Produs).to.be.equal(testitem.Produs);
-      expect(res.body.Pret).to.be.equal(testitem.Pret);
-      expect(res.body.Description).to.be.equal(testitem.Description);
+      expect(res.body.Produs).to.be.equal(updateditem.Produs);
+      expect(res.body.Pret).to.be.equal(updateditem.Pret);
+      expect(res.body.Description).to.be.equal(updateditem.Description);
       if (err) {
         throw err;
       };
@@ -78,7 +78,7 @@ describe('API', function() {
 
   it('should succesfully delete test item', function(done) {
     request(app)
-    .delete('/api/products/' + id)
+    .delete('/api/product/' + id)
     .end(function(err,res) {
       expect(res.body._id).to.be.equal(id);
       expect(res.body.Produs).to.be.equal(updateditem.Produs);
