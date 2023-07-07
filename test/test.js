@@ -4,6 +4,7 @@ const expect = require('chai').expect;
 
 const testitem = require('./testitem.json');
 const updateditem = require('./updateditem.json');
+const testuser = require('./testuser.json');
 
 describe('App', function() {
   it('has the default page', function(done) {
@@ -13,7 +14,7 @@ describe('App', function() {
   });
 }); 
 
-describe('API', function() {
+describe('Products API', function() {
   var id;
 
   it('should succesfully post test item', function(done) {
@@ -89,5 +90,21 @@ describe('API', function() {
       };
       done();
     });
+  });
+});
+
+describe("User API", function () {
+  it("Should succesfully register a user", function (done) {
+    request(app)
+      .post("/api/users")
+      .send(testuser)
+      .end(function (err, res) {
+        expect(res.body.id).to.not.be.undefined;
+        if (err) {
+          throw err;
+        }
+        id = res.body.id;
+        done();
+      });
   });
 });
