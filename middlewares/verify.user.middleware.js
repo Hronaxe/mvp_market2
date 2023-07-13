@@ -18,12 +18,32 @@ exports.isPasswordAndUserMatch = (req, res, next) => {
           email: user[0].email,
           permissionLevel: user[0].permissionLevel,
           provider: "email",
-          name: user[0].firstName + " " + user[0].lastName,
+          username: user[0].username
         };
         return next();
       } else {
-        return res.status(400).send({ errors: ["Invalid email or password"] });
+        return res.status(400).send({ errors: ["Invalid e-mail or password"] });
       }
     }
   });
+};
+exports.hasAuthValidFields = (req, res, next) => {
+  let errors = [];
+
+  if (req.body) {
+      if (!req.body.email) {
+          errors.push('Missing email field');
+      }
+      if (!req.body.password) {
+          errors.push('Missing password field');
+      }
+
+      if (errors.length) {
+          return res.status(400).send({errors: errors.join(',')});
+      } else {
+          return next();
+      }
+  } else {
+      return res.status(400).send({errors: 'Missing email and password fields'});
+  }
 };
