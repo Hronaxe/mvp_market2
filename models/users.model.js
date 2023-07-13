@@ -5,7 +5,7 @@ const userSchema = new Schema({
   username: String,
   email: { type: String, unique: true },
   password: String,
-  status: String,
+  permissionLevel: Number
 });
 
 userSchema.virtual("id").get(function () {
@@ -23,5 +23,53 @@ exports.createUser = (userData) => {
 };
 
 exports.findByEmail = (email) => {
-  return User.findOne({ email: email });
+  return User.find({email: email});
+};
+
+userSchema.findById = function (cb) {
+  return this.model('Users').find({id: this.id}, cb);
+};
+
+exports.findById = (id) => {
+  return User.findById(id)
+      .then((result) => {
+          result = result.toJSON();
+          delete result._id;
+          delete result.__v;
+          delete result.password;
+          return result;
+      });
+};
+
+exports.list = (perPage, page) => {
+  return new Promise((resolve, reject) => {
+      User.find()
+          .select('-password -__v')
+          .limit(perPage)
+          .skip(perPage * page)
+          .exec(function (err, users) {
+              if (err) {
+                  reject(err);
+              } else {
+                  resolve(users);
+              }
+          })
+  });
+};
+exports.patchUser = (id, userData) => {
+  return User.findOneAndUpdate({
+      _id: id
+  }, userData);
+};
+
+exports.removeById = (userId) => {
+  return new Promise((resolve, reject) => {
+      User.deleteMany({_id: userId}, (err) => {
+          if (err) {
+              reject(err);
+          } else {
+              resolve(err);
+          }
+      });
+  });
 };
